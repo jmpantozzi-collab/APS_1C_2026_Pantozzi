@@ -32,7 +32,7 @@ nn=1000
 fs=1000
 
 tt,xx=mi_funcion_sen(vmax,dc,ff,ph,nn,fs)
-
+plt.figure(0)
 plt.plot(tt, xx)
 plt.xlabel("Tiempo [s]")
 plt.ylabel("Amplitud [V]")
@@ -57,7 +57,7 @@ plt.figure(1)
 plt.clf()
 plt.plot(tt, xxn)
 plt.plot(tt,xx)
-plt.title(f'f0={f0}Hz')
+plt.title(f'ff={ff}Hz')
 
 #%% como usar convolucionar, primero creo una delta
 
@@ -66,11 +66,18 @@ dd= np.zeros(nn)
 dd[n0]= 1.
 
 yy= sig.convolve(xx,dd)
+plt.figure(2)
+plt.clf()
+plt.plot(yy)
+plt.title('convolucion')
 
 #%% autocorrelacion
 
 yyn= (1/nn) * sig.convolve(R, np.flip(R))
-
+plt.figure(3)
+plt.clf()
+plt.plot(yyn)
+plt.title('autocorrelacion')
 #%% cuantizacion
 
 B = 4 #bits
@@ -85,13 +92,14 @@ exxq= xxq-xx
 yyn= (1/nn) * sig.convolve(exxq, np.flip(exxq))
 vare=np.var(exxq)
 varteoe=qq**2/12
-print ("Varianza de error: ", vare)
-print ("varianza teorica: ", varteoe)
-plt.figure(2)
+
+plt.figure(4)
 plt.clf()
 plt.plot(tt, xx)
 plt.plot(tt,xxq)
 plt.title('señal cuantizada')
 
+print ("Varianza de error de cuantizacion: ", vare)
+print ("varianza teorica de error de cuantizacion: ", varteoe)
 
 
