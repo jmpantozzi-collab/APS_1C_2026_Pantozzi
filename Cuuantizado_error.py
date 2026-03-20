@@ -34,7 +34,7 @@ vmax=np.sqrt(2)
 tt,xx=mi_funcion_sen(vmax,dc,ff,ph,nn,fs)
 
 Px=np.var(xx)
-SNR=10
+SNR=15
 Pr=10**(-SNR/10)
 R= np.random.normal(0, np.sqrt(Pr), 1000)
 
@@ -63,7 +63,8 @@ plt.clf()
 plt.plot(xxn, label = 'xxn')
 plt.plot(xxq, label = 'xxq')
 plt.legend()
-plt.title('señal cuantizada')
+plt.title ('señal cuantizada')
+plt.show()
 
 plt.figure(5)
 plt.clf()
