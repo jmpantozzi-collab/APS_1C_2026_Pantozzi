@@ -336,16 +336,70 @@ plt.annotate(
 plt.show()
 
 #%%Verificacion de ejercicio 2
-
-
 #%% como usar convolucionar, primero creo una delta
+T0=1/fs
+w0=2 * np.pi * ff
+n = np.arange(nn)
+#creamos h[x]=delta(n)-delta(n-4)
+h= np.zeros(nn)
+h[0]= 1
+h[4]=-1
 
-n0= 300 #muestras
-dd= np.zeros(nn)
-dd[n0]= 1.
+# --- (a) ---
 
-yy= sig.convolve(xx,dd)
-plt.figure(2)
+tt= np.arange(nn)/fs
+xx = np.cos(w0*n*T0)
+
+#mi solucion
+x1=2*np.sin(2*w0*T0)*np.cos(w0*n*T0-2*w0*T0+(np.pi/2))
+
+yy= sig.convolve(xx,h)
+
+plt.figure(6)
 plt.clf()
-plt.plot(yy)
-plt.title('convolucion')
+plt.plot(x1[:175],label ='mi solucion',color='red', linestyle='dotted')
+plt.plot(yy[:175],label ='convolucion por codigo',color='pink',linestyle='dotted')
+plt.plot(h[:175],label ='h[n]',color='violet', linestyle='--')
+plt.plot(xx[:175],label ='x[n]',color='green', linestyle='dotted')
+plt.title('convolucion ejercicio a')
+plt.legend()
+plt.show()
+
+u = lambda x: (x >= 0).astype(int)
+
+# --- (b) ---
+xxb = (0.5)**n * u(n)
+
+x2 = (0.5)**n * u(n) - (0.5)**(n-4) * u(n-4)
+
+yy2 = sig.convolve(xxb, h)
+
+plt.figure(7)
+plt.clf()
+plt.plot(x2[:25], label='mi solución', color='red', linestyle='dotted')
+plt.plot(yy2[:25], label='convolución por código', color='pink', linestyle='dotted')
+plt.plot(xxb[:25], label='x[n]', color='green', linestyle='dotted')
+plt.plot(h[:25],label ='h[n]',color='violet', linestyle='--')
+plt.title('convolución ejercicio b')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# --- (c) ---
+xxc = u(n+1) - u(n-2)
+
+x3 = (u(n+1) - u(n-2)) - (u(n-3) - u(n-6))
+
+yy3 = sig.convolve(xxc, h)
+
+plt.figure(8)
+plt.clf()
+plt.plot(x3[:25], label='mi solución', color='red', linestyle='dotted')
+plt.plot(yy3[:25], label='convolución por código', color='pink', linestyle='dotted')
+plt.plot(xxc[:25], label='x[n]', color='green', linestyle='dotted')
+plt.plot(h[:25],label ='h[n]',color='violet', linestyle='--')
+plt.title('convolución ejercicio c')
+plt.legend()
+plt.grid(True)
+plt.show()
+
