@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def mi_funcion_sen(vmax, dc, ff, ph, nn, fs):
-    ts = 1 / fs
-    tt = np.arange(0, nn) * ts
-    xx = dc + vmax * np.sin(2 * np.pi * ff * tt + ph)
-    return tt, xx
+        ts = 1 / fs
+        tt = np.arange(0, nn) * ts
+        xx = dc + vmax * np.sin(2 * np.pi * ff * tt + ph)
+        return tt, xx
 
 # %% --- CONFIGURACIÓN BASE ---
 
