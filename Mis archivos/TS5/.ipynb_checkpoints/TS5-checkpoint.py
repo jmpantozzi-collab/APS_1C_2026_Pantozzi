@@ -95,14 +95,18 @@ print(f"Banda pasante: de {f_cuca_inf:.2f} Hz a {f_cuca_sup:.2f} Hz")
 print(f"Ancho de Banda (BW) al 95%: {bw_efectivo:.2f} Hz")
 plt.figure(1, figsize=(12, 7))  
 
-
+# Usamos plt.plot en lugar de plt.semilogy
 #plt.plot(f_cuca, pxx_cuca_db, color='red', label=f'nperseg = {nn}', linewidth=1)
 #plt.plot(f_cuca2, pxx_cuca2_db, color='blue', label=f'nperseg = {nn//2}', linewidth=1)
 #plt.plot(f_cuca4, pxx_cuca4_db, color='green', label=f'nperseg = {nn//4}', linewidth=1)
 plt.plot(f_cuca8, pxx_cuca8_db_norm, color='violet', label=f'nperseg = {nn//7}', linewidth=1)
 #plt.plot(f_cuca10, pxx_cuca10_db, color='pink', label=f'nperseg = {nn//10}', linewidth=1)
 
-
+#plt.semilogy(f_cuca, Pxx_den_cuca, color='red', label=f'nperseg = {nn}', linewidth=1)
+#plt.semilogy(f_cuca2, Pxx_den_cuca2, color='blue', label=f'nperseg = {nn//2}', linewidth=1)
+#plt.semilogy(f_cuca4, Pxx_den_cuca4, color='green', label=f'nperseg = {nn//4}', linewidth=1)
+#plt.semilogy(f_cuca8, Pxx_den_cuca8, color='violet', label=f'nperseg = {nn//8}', linewidth=1)
+#plt.semilogy(f_cuca10, Pxx_den_cuca10, color='pink', label=f'nperseg = {nn//10}', linewidth=1)
 plt.axvline(x=f_cuca_inf, color='darkviolet', linestyle='--', linewidth=1.5, label=f"F_inferior (2.5% BW): {f_cuca_inf:.2f} Hz")
 plt.axvline(x=f_cuca_sup, color='darkviolet', linestyle='-', linewidth=1.5, label=f"F_superior (97.5% BW): {f_cuca_sup:.2f} Hz")
 plt.title(f"Espectro de Potencia - La Cucaracha (con Zero-Padding) Bw: {bw_efectivo:.2f} Hz")
@@ -165,16 +169,16 @@ plt.show()
 
 #%%PPG sin ruido
 
-nn_ppg=50000
+nn_ppg=30000
 # Definimos el tamaño del zero-padding. Generalmente es una potencia de 2 mayor a nperseg, 
 # o simplemente un multiplicador. 
-nfft_pad_PPG = nn_ppg * 2
+nfft_pad_PPG = nn * 2
 
-f_PPG, Pxx_den_ppg = sig.welch(ppg, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg,nfft=nfft_pad_PPG)
-f_PPG2, Pxx_den_ppg2 = sig.welch(ppg, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg/2,nfft=nfft_pad_PPG)
-f_PPG4, Pxx_den_ppg4 = sig.welch(ppg, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg/4,nfft=nfft_pad_PPG)
-f_PPG8, Pxx_den_ppg8 = sig.welch(ppg, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg/8,nfft=nfft_pad_PPG)
-f_PPG10, Pxx_den_ppg10 = sig.welch(ppg, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg/10,nfft=nfft_pad_PPG)
+f_PPG, Pxx_den_ppg = sig.welch(ecg_one_lead, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg,nfft=nfft_pad_PPG)
+f_PPG2, Pxx_den_ppg2 = sig.welch(ecg_one_lead, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg/2,nfft=nfft_pad_PPG)
+f_PPG4, Pxx_den_ppg4 = sig.welch(ecg_one_lead, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg/4,nfft=nfft_pad_PPG)
+f_PPG8, Pxx_den_ppg8 = sig.welch(ecg_one_lead, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg/8,nfft=nfft_pad_PPG)
+f_PPG10, Pxx_den_ppg10 = sig.welch(ecg_one_lead, fs_ppg,window='hamming',scaling='spectrum',nperseg=nn_ppg/10,nfft=nfft_pad_PPG)
 
 
 Pxx_den_PPG_norm=Pxx_den_ppg4/np.max(np.abs(Pxx_den_ppg4))
@@ -203,7 +207,7 @@ plt.figure(3, figsize=(12, 7))
 
 #plt.plot(f_PPG, pxx_ppg_db, color='red', label=f'nperseg = {nn_ecg}', linewidth=1)
 #plt.plot(f_PPG2, pxx_ppg2_db, color='b', label=f'nperseg = {nn_ecg//2}', linewidth=1)
-plt.plot(f_PPG4, pxx_ppg4_db, color='green', label=f'nperseg = {nn_ppg//4}', linewidth=1)
+plt.plot(f_PPG4, pxx_ppg4_db, color='green', label=f'nperseg = {nn_ecg//4}', linewidth=1)
 #plt.plot(f_PPG8, pxx_ppg8_db, color='violet', label=f'nperseg = {nn_ecg//8}', linewidth=1)
 #plt.plot(f_PPG10, pxx_ppg10_db, color='green', label=f'nperseg = {nn_ecg//10}', linewidth=1)
 
