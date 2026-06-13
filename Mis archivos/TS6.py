@@ -11,7 +11,7 @@ import scipy.signal as signal
 
 #%% Definiciones
 #Los coeficientes del sistema
-b = [1,0, -1]  # Coeficientes que multiplican a las x(n)
+b = [1,0,0,0, -1]  # Coeficientes que multiplican a las x(n)
 a = [1]           # Coeficiente que multiplica a y(n)
 
 # Calculamos la respuesta en frecuencia
