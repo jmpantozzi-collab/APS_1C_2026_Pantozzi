@@ -87,7 +87,7 @@ ax1.axhline(-gstop, color='black', linestyle=':', alpha=0.5)
 
 # Configuración de ejes e títulos
 ax1.set_title('Plantilla de Diseño - Filtro Pasa Banda ECG', fontsize=12)
-ax1.set_xlabel('Frecuencia normalizada a Nyq [#]', fontsize=10)
+ax1.set_xlabel('Frecuencia [Hz]', fontsize=10)
 ax1.set_ylabel('Amplitud [dB]', fontsize=10)
 ax1.set_xlim([0, 50])  # Acercamos el zoom para ver en detalle el ECG (hasta 0.3 de Nyquist = 75Hz)
 ax1.set_ylim([-100, 5])

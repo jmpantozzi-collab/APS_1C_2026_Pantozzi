@@ -12,6 +12,15 @@ from scipy import signal as sig
 import scipy.io as sio  
 
 
+'----------Plantilla diseñada para ECG----------'
+# Especificaciones de la plantilla (en Hz)
+wp1_d = 0.5 
+ws1_d = 0.1
+wp2_d = 35 
+ws2_d = 45
+
+wp_d = [wp1_d, wp2_d] 
+ws_d = [ws1_d, ws2_d]
 '-----DISEÑO FILTRO FIR REMEZ----'
 fs_ecg = 1000
 mat_struct = sio.loadmat('./TS5/ECG_TP4.mat')
@@ -21,50 +30,40 @@ ecg_one_lead = mat_struct['ecg_lead'].flatten()
 fs = 1000
 ripple = 1 
 
-ws1 = .2 #STOP
-wp1 = 1.2 #PASO
+ws1 = .3 #STOP
+wp1 = 1 #PASO
  
 ws2 = 36.5 #STOP
 wp2 = 35 # con 99% de energia me dio 31.41 
 
 gpass = 1
-gstop = 40
+gstop = 50
 
 wp = [wp1, wp2]
 ws = [ws1, ws2]
 
-numtaps = 1721  #el orden de mi filtro es ceficientes -1
-# tipo 2, coeficientes par, retardo no entero 
-#numtaps = 31 # tipo 1, coeficientes impar, retardo entero
+# Número de coeficientes (Taps) - Mantenemos un orden impar (Fase Lineal Tipo 1)
+numtaps = 1721 
+demora = (numtaps - 1) // 2
 
-demora = (numtaps-1)//2 # // para que sea entero 
+# Bandas para Remez
+bandas = np.array([0.0, ws1, wp1, wp2, ws2, fs//2])
+gains = np.array([0, 1, 0])
 
-#gains = 10**((-1)*np.array([gstop, gstop, gpass, gpass, gstop, gstop])/20)
-gains = np.array([0,1, 0])
+# Ajustamos los pesos: incrementamos el peso de la banda alta a 40 para aplastar los lóbulos
+pesos = [10, 1, 40] 
 
-if numtaps % 2 == 0:
-    gains[-1] = 0. 
-    
-b_win = sig.remez(numtaps, bands= np.array([0. , ws1, wp1, wp2, ws2, fs//2]),
-                  type='hilbert',
-                  desired=gains,
-                  weight=([7,1,25]),
-                  fs=fs)
-#el peso "weight" debe ser un array con la mitad de terminos que el nads (agarro el bands y cada 2 puntos tengo 1 region)
+# --- DISEÑO DEL FILTRO ---
+# NOTA: Eliminamos type='hilbert' para que use el comportamiento por defecto (bandpass)
+b_win = sig.remez(numtaps, bands=bandas, desired=gains, weight=pesos, fs=fs)
 
-
-'RETARDO DE GRUPO'
-ww = np.concatenate([
-    np.logspace(start=-2, stop=0.1, num=500), 
-    np.linspace(start=1.26, stop=35, num=200),
-    np.logspace(start=1.55, stop=1.65, num=300),
-    np.linspace(start=46, stop=fs//2, num=50)]) 
+# --- RESPUESTA EN FRECUENCIA (Vector Lineal Limpio) ---
+# Usamos un espacio lineal uniforme para evitar quiebres artificiales en el gráfico
+ww = np.linspace(0, fs//2, 2000)
+w, h = sig.freqz(b_win, a=1, worN=ww, fs=fs)
+def_db = 20 * np.log10(np.abs(h) + 1e-12)
 
 
-zeros, poles, gain = sig.tf2zpk(b_win,a = 1)
-
-# 2. Calculamos la respuesta en frecuencia para el retardo de grupo
-w, h = sig.freqz(b_win, worN=ww, fs=fs) # w son las frecuencias, H es la respuesta compleja
 
 # ==========================================
 # 1. GRÁFICO: PLANTILLA DE DISEÑO
@@ -80,11 +79,11 @@ ax1.plot(w, def_db, color='C0', lw=2, label='FIR VENTANA')
 
 # Dibujar zonas prohibidas de la plantilla (Sombreado con patrones hachados)
 # Banda de rechazo izquierda (0 a ws1) o hasta ws1/nyq si tuviera la frecuencia normalizada a nyquist
-ax1.fill_between([0, ws1], -gstop, 10, color='gray', alpha=0.2, hatch='XX', label='Plantilla (Zonas prohibidas)')
+ax1.fill_between([0, ws1_d], -gstop, 10, color='gray', alpha=0.2, hatch='XX', label='Plantilla (Zonas prohibidas)')
 # Banda de rechazo derecha (ws2 a fs/2)
-ax1.fill_between([ws2, fs/2], -gstop, 10, color='gray', alpha=0.2, hatch='XX')
+ax1.fill_between([ws2_d, fs/2], -gstop, 10, color='gray', alpha=0.2, hatch='XX')
 # Banda de paso (límite inferior de ripple entre wp1 y wp2)
-ax1.fill_between([wp1, wp2], -100, -gpass, color='gray', alpha=0.15, hatch='//')
+ax1.fill_between([wp1_d, wp2_d], -100, -gpass, color='gray', alpha=0.15, hatch='//')
 
 # Dibujar líneas guía para las frecuencias de corte de la plantilla
 ax1.axvline(wp1, color='red', linestyle='--', alpha=0.6, lw=1)
